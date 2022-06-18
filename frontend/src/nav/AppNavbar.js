@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Navbar, NavbarBrand} from 'reactstrap';
+import {Container, Nav, Navbar, NavbarBrand, NavItem, NavLink} from 'reactstrap';
 import {Link} from 'react-router-dom';
 
 export default class AppNavbar extends Component {
@@ -16,8 +16,23 @@ export default class AppNavbar extends Component {
     }
 
     render() {
-        return <Navbar color="dark" dark expand="md">
-            <NavbarBrand tag={Link} to="/">Home</NavbarBrand>
-        </Navbar>;
+        return <div>
+            <Navbar color="dark" dark expand="md">
+                <Container>
+                   <NavbarBrand tag={Link} to="/">DiscGolfReview</NavbarBrand>
+                   <Nav className="ml-auto" navbar>
+                       <NavItem>
+                           <NavLink tag={Link} to="/courses">Courses</NavLink>
+                       </NavItem>
+                       <NavItem>
+                           <NavLink tag={Link} to="/login">Login</NavLink>
+                       </NavItem>
+                       <NavItem>
+                           <NavLink tag={Link} to="/register">Sign Up</NavLink>
+                       </NavItem>
+                   </Nav>
+                </Container>
+            </Navbar>
+        </div>;
     }
 }
