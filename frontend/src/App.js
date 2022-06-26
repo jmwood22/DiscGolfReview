@@ -1,24 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
-import Home from './nav/Home';
-import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import CourseList from './course/CourseList';
-import CourseEdit from './course/CourseEdit';
+import {Home} from './pages/Home';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import CourseList from './pages/course/CourseList';
+import CourseView from './pages/course/CourseView';
+import CourseEdit from './pages/course/CourseEdit';
+import {ProtectedRoute} from "./components/auth/ProtectedRoute";
 
 
-class App extends Component {
+export const App = () => {
 
-  render() {
     return (
         <Router>
           <Switch>
             <Route path='/' exact={true} component={Home}/>
             <Route path='/courses' exact={true} component={CourseList}/>
-            <Route path='/courses/:id' component={CourseEdit}/>
+            <ProtectedRoute path='/courses/edit/:id' component={CourseEdit}/>
+            <Route path='/courses/:id' component={CourseView}/>
           </Switch>
         </Router>
     )
-  }
-}
-
-export default App;
+};
