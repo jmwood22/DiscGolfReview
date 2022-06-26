@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -48,6 +47,9 @@ public class CourseController {
         Course currentCourse = courseRepository.findById(id).orElseThrow(RuntimeException::new);
         currentCourse.setName(course.getName());
         currentCourse.setLocation(course.getLocation());
+        currentCourse.setDescription(course.getDescription());
+        currentCourse.setDefaultImageUrl(course.getDefaultImageUrl());
+        currentCourse.setAmenities(course.getAmenities());
         currentCourse = courseRepository.save(currentCourse);
 
         return ResponseEntity.ok(currentCourse);
@@ -71,6 +73,9 @@ public class CourseController {
         return Course.builder()
                 .name("Sample Course")
                 .location("Middle of Nowhere")
+                .description("Sample description text")
+                .defaultImageUrl("https://i.imgur.com/lI9MXsk.jpeg")
+                .amenities("Sample amenities")
                 .build();
     }
 }

@@ -6,14 +6,21 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Auth0Provider} from "@auth0/auth0-react";
 
+import configData from "./config.json";
+
+const providerConfig = {
+    domain: configData.domain,
+    clientId: configData.clientId,
+    audience: configData.audience,
+    redirectUri: window.location.origin,
+    useRefreshTokens: true,
+    cacheLocation: "localstorage"
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <Auth0Provider
-          domain="dev-8x1z4q49.us.auth0.com"
-          clientId="lZt9NkvPby4rlvgFKcckV8YHJyyDUoLH"
-          redirectUri={window.location.origin}
-      >
+      <Auth0Provider {...providerConfig}>
           <App />
       </Auth0Provider>
   </React.StrictMode>

@@ -7,7 +7,6 @@ import CourseView from './pages/course/CourseView';
 import CourseEdit from './pages/course/CourseEdit';
 import {ProtectedRoute} from "./components/auth/ProtectedRoute";
 
-
 export const App = () => {
 
     return (

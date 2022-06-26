@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
+import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import {AppNavbar} from '../../components/AppNavbar';
+import {withAuth0} from "@auth0/auth0-react";
+import configData from "../../config.json"
 
 class CourseEdit extends Component {
 
@@ -43,26 +45,47 @@ class CourseEdit extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         const {item} = this.state;
+        const { getAccessTokenSilently, user } = this.props.auth0;
 
-        await fetch('/courses' + (item.id ? '/' + item.id : ''), {
-            method: (item.id) ? 'PUT' : 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item),
+        getAccessTokenSilently({
+            audience: configData.audience
+        }).then(token => {
+            console.log(user);
+            if(!item.id) {
+                console.log("Before: ", JSON.stringify(item));
+                item.author = user;
+                console.log("After: ", JSON.stringify(item));
+            }
+
+            fetch('/courses' + (item.id ? '/' + item.id : ''), {
+                method: (item.id) ? 'PUT' : 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'User': JSON.stringify(user),
+                    Authorization: 'Bearer ' + token
+                },
+                body: JSON.stringify(item),
+            })
         });
 
         this.props.history.push('/courses');
     }
 
     async remove(id) {
-        await fetch('/courses/' + id, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+        const { getAccessTokenSilently, user } = this.props.auth0;
+
+        getAccessTokenSilently({
+            audience: configData.audience
+        }).then(token => {
+            fetch('/courses/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token
+                }
+            })
         });
     }
 
@@ -111,4 +134,4 @@ class CourseEdit extends Component {
     }
 }
 
-export default withRouter(CourseEdit);
+export default withAuth0(CourseEdit);
