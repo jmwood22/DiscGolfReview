@@ -50,11 +50,8 @@ class CourseEdit extends Component {
         getAccessTokenSilently({
             audience: configData.audience
         }).then(token => {
-            console.log(user);
             if(!item.id) {
-                console.log("Before: ", JSON.stringify(item));
                 item.author = user;
-                console.log("After: ", JSON.stringify(item));
             }
 
             fetch('/courses' + (item.id ? '/' + item.id : ''), {

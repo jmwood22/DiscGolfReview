@@ -1,6 +1,7 @@
 package com.jmwood.sample.discgolfreview.controller;
 
 import com.jmwood.sample.discgolfreview.model.Course;
+import com.jmwood.sample.discgolfreview.model.Review;
 import com.jmwood.sample.discgolfreview.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,16 @@ public class CourseController {
         currentCourse = courseRepository.save(currentCourse);
 
         return ResponseEntity.ok(currentCourse);
+    }
+
+    @PostMapping("/reviews/{id}")
+    public ResponseEntity addReview(@PathVariable String id, @RequestBody Review review) {
+        log.info("Received request to add the following review to Course with id {}: {}", id, review);
+        Course course = courseRepository.findById(id).orElseThrow(RuntimeException::new);
+        course.addReview(review);
+        course = courseRepository.save(course);
+
+        return ResponseEntity.ok(course);
     }
 
     @DeleteMapping("/{id}")
