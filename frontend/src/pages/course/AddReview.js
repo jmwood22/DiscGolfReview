@@ -3,8 +3,9 @@ import {withAuth0} from "@auth0/auth0-react";
 import configData from "../../config.json"
 import {AppNavbar} from "../../components/AppNavbar";
 import {Button, Container, Form, FormGroup, Input, Label} from "reactstrap";
+import {Link} from "react-router-dom";
 
-class Review extends Component {
+class AddReview extends Component {
 
     emptyReview = {
         author: {
@@ -17,7 +18,6 @@ class Review extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            id: this.props.match.params.id,
             review: this.emptyReview
         }
 
@@ -38,14 +38,14 @@ class Review extends Component {
     async handleSubmit(event) {
         event.preventDefault();
 
-        const { id, review } = this.state;
+        const { review } = this.state;
+        const { id } = this.props.match.params;
         const { getAccessTokenSilently, user } = this.props.auth0;
 
         getAccessTokenSilently({
             audience: configData.audience
         }).then(token => {
             review.author = user;
-            console.log("Review: ", JSON.stringify(review));
 
             fetch('/courses/reviews/' + id, {
                 method: 'POST',
@@ -57,12 +57,19 @@ class Review extends Component {
                 },
                 body: JSON.stringify(review)
             })
+                .then(response => response.json())
+                .then(data => this.props.history.push({
+                    pathname: '/courses/' + id,
+                    state: {
+                        course: data
+                    }
+                }))
         });
-
-        this.props.history.push('/courses/' + id);
     }
 
     render() {
+        const { id } = this.props.match.params;
+
         return <div>
             <AppNavbar/>
             <Container>
@@ -84,7 +91,8 @@ class Review extends Component {
                         <Input type="text" name="text" id="text" onChange={this.handleChange} autoComplete="text"/>
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Submit</Button>
+                        <Button color="primary" type="submit">Submit</Button>{' '}
+                        <Button color="secondary" tag={Link} to={"/courses/" + id}>Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>
@@ -92,4 +100,4 @@ class Review extends Component {
     }
 }
 
-export default withAuth0(Review);
+export default withAuth0(AddReview);

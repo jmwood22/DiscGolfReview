@@ -14,6 +14,7 @@ import {
     Container,
     UncontrolledAccordion
 } from "reactstrap";
+import {Review} from "../../components/Review";
 
 class CourseView extends Component {
 
@@ -39,14 +40,19 @@ class CourseView extends Component {
 
     constructor(props) {
         super(props);
+        const course = props.location.state?.course;
         this.state = {
-            course: this.emptyItem
+            course: course ? course : this.emptyItem,
         }
     }
 
-    async componentDidMount() {
-        const course = await (await fetch('/courses/' + this.props.match.params.id)).json();
-        this.setState({course: course});
+    componentDidMount() {
+        const {course} = this.state;
+        if(course === this.emptyItem) {
+            fetch('/courses/' + this.props.match.params.id)
+                .then(response => response.json())
+                .then(data => this.setState({course: data}))
+        }
     }
 
     render() {
@@ -63,7 +69,12 @@ class CourseView extends Component {
                                 <p>{course.name}</p>
                             </div>
                             <div className="col-md-3">
-                                <Button tag={Link} to={"/courses/edit/" + course.id}>Edit</Button>
+                                <Button tag={Link} to={{
+                                    pathname: "/courses/edit/" + course.id,
+                                    state: {
+                                        course: course
+                                    }
+                                }}>Edit</Button>
                             </div>
                         </div>
                         <div className="row">
@@ -90,22 +101,19 @@ class CourseView extends Component {
                         </Card>
 
                         <div className="mb-5 mt-3 p-3 bg-light border border-light rounded">
-                            <Button className="float-end" tag={Link} to={"/courses/edit/review/" + course.id}>Leave a Review</Button>
+                            <Button className="float-end" tag={Link} to={{
+                                pathname: "/courses/edit/review/" + course.id,
+                                state: {
+                                    course: course
+                                }
+                            }}>Leave a Review</Button>
                             <h4 className="p-1">Reviews</h4>
                             <hr/>
                             <div>
                                 {
                                     course.reviews ? course.reviews.map(review => {
                                         return (
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <strong>{review.author.nickname}</strong>{' '}
-                                                    <span>
-                                                        {review.rating}/5
-                                                    </span>
-                                                    <p>{review.text}</p>
-                                                </div>
-                                            </div>
+                                            <Review review={review}/>
                                         )
                                     }) :
                                         <span>Be the first to write a review!</span>
