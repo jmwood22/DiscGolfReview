@@ -4,6 +4,7 @@ import configData from "../../config.json"
 import {AppNavbar} from "../../components/AppNavbar";
 import {Button, Container, Form, FormGroup, Input, Label} from "reactstrap";
 import {Link} from "react-router-dom";
+import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
 
 class AddReview extends Component {
 
@@ -91,8 +92,13 @@ class AddReview extends Component {
                         <Input type="text" name="text" id="text" onChange={this.handleChange} autoComplete="text"/>
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Submit</Button>{' '}
-                        <Button color="secondary" tag={Link} to={"/courses/" + id}>Cancel</Button>
+                        <ClickTrackingComponent name={"Add Review Submit Button for Course with ID " + id} component={
+                            <Button color="primary" type="submit">Submit</Button>
+                        }/>
+                        {' '}
+                        <ClickTrackingComponent name={"Add Review Cancel Button for Course with ID " + id} component={
+                            <Button color="secondary" tag={Link} to={"/courses/" + id}>Cancel</Button>
+                        }/>
                     </FormGroup>
                 </Form>
             </Container>

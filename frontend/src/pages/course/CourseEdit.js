@@ -4,6 +4,7 @@ import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import {AppNavbar} from '../../components/AppNavbar';
 import {withAuth0} from "@auth0/auth0-react";
 import configData from "../../config.json"
+import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
 
 class CourseEdit extends Component {
 
@@ -131,9 +132,17 @@ class CourseEdit extends Component {
                                onChange={this.handleChange} autoComplete="defaultImageUrl"/>
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="danger" onClick={() => this.remove(course.id)} tag={Link} to="/courses">Delete</Button>{' '}
-                        <Button color="secondary" tag={Link} to={redirectPath}>Cancel</Button>
+                        <ClickTrackingComponent name={"Edit Course Submit Button for Course with ID " + course.id} component={
+                            <Button color="primary" type="submit">Save</Button>
+                        }/>
+                        {' '}
+                        <ClickTrackingComponent name={"Edit Course Delete Button for Course with ID " + course.id} component={
+                            <Button color="danger" onClick={() => this.remove(course.id)} tag={Link} to="/courses">Delete</Button>
+                        }/>
+                        {' '}
+                        <ClickTrackingComponent name={"Edit Course Cancel Button for Course with ID " + course.id} component={
+                            <Button color="secondary" tag={Link} to={redirectPath}>Cancel</Button>
+                        }/>
                     </FormGroup>
                 </Form>
             </Container>

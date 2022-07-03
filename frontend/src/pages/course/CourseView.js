@@ -15,6 +15,7 @@ import {
     UncontrolledAccordion
 } from "reactstrap";
 import {Review} from "../../components/Review";
+import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
 
 class CourseView extends Component {
 
@@ -69,24 +70,31 @@ class CourseView extends Component {
                                 <p>{course.name}</p>
                             </div>
                             <div className="col-md-3">
-                                <Button tag={Link} to={{
-                                    pathname: "/courses/edit/" + course.id,
-                                    state: {
-                                        course: course
-                                    }
-                                }}>Edit</Button>
+                                <ClickTrackingComponent name={"Edit Button for Course with ID " + course.id} component={
+                                    <Button tag={Link}
+                                            to={{
+                                                pathname: "/courses/edit/" + course.id,
+                                                state: {
+                                                    course: course
+                                                }
+                                            }}>Edit</Button>
+                                }/>
                             </div>
                         </div>
                         <div className="row">
-                            <UncontrolledAccordion open="1">
-                                <AccordionItem>
-                                    <AccordionHeader targetId="1">Location</AccordionHeader>
-                                    <AccordionBody  accordionId="1">{course.location}</AccordionBody>
-                                </AccordionItem>
-                                <AccordionItem>
-                                    <AccordionHeader targetId="2">Amenities</AccordionHeader>
-                                    <AccordionBody accordionId="2">{course.amenities}</AccordionBody>
-                                </AccordionItem>
+                            <UncontrolledAccordion open={1}>
+                                <ClickTrackingComponent name={"Location AccordionItem for Course with ID " + course.id} component={
+                                    <AccordionItem>
+                                        <AccordionHeader targetId={1}>Location</AccordionHeader>
+                                        <AccordionBody accordionId={1}>{course.location}</AccordionBody>
+                                    </AccordionItem>
+                                }/>
+                                <ClickTrackingComponent name={"Amenities AccordionItem for Course with ID " + course.id} component={
+                                    <AccordionItem>
+                                        <AccordionHeader targetId={2}>Amenities</AccordionHeader>
+                                        <AccordionBody accordionId={2}>{course.amenities}</AccordionBody>
+                                    </AccordionItem>
+                                }/>
                             </UncontrolledAccordion>
                         </div>
                     </div>
@@ -94,19 +102,23 @@ class CourseView extends Component {
                     <div className="col-md-9">
                         <Card>
                             <CardImg src={course.defaultImageUrl}/>
-                            <CardBody  className="bg-light">
+                            <CardBody className="bg-light">
                                 <CardTitle>{course.name}</CardTitle>
                                 <CardText>{course.description}</CardText>
                             </CardBody>
                         </Card>
 
                         <div className="mb-5 mt-3 p-3 bg-light border border-light rounded">
-                            <Button className="float-end" tag={Link} to={{
-                                pathname: "/courses/edit/review/" + course.id,
-                                state: {
-                                    course: course
-                                }
-                            }}>Leave a Review</Button>
+                            <ClickTrackingComponent name={"Leave a Review Button for Course with ID " + course.id} component={
+                                <Button className="float-end"
+                                        tag={Link}
+                                        to={{
+                                            pathname: "/courses/edit/review/" + course.id,
+                                            state: {
+                                                course: course
+                                            }
+                                }}>Leave a Review</Button>
+                            }/>
                             <h4 className="p-1">Reviews</h4>
                             <hr/>
                             <div>

@@ -1,29 +1,26 @@
-import React, { Component } from "react";
-import {
-    Button,
-    Card,
-    CardBody,
-    CardImg,
-    CardText,
-    CardTitle,
-    Col,
-    Container,
-    Row
-} from 'reactstrap';
+import React, {Component} from "react";
+import {Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Container, Row} from 'reactstrap';
 import {AppNavbar} from '../../components/AppNavbar';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
 
 class CourseList extends Component {
 
     constructor(props) {
         super(props);
         this.state = {courses: []};
+
+        this.handleSessionClick = this.handleSessionClick.bind(this);
     }
 
     componentDidMount() {
         fetch('/courses')
             .then(response => response.json())
             .then(data => this.setState({courses: data}));
+    }
+
+    handleSessionClick(event) {
+        console.log("Click: ", event);
     }
 
     render() {
@@ -39,7 +36,16 @@ class CourseList extends Component {
                         <CardBody  className="bg-light">
                             <CardTitle>{course.name}</CardTitle>
                             <CardText>{course.description}</CardText>
-                            <Button size="sm" color="primary" tag={Link} to={"/courses/" + course.id}>View More Info</Button>
+                            <ClickTrackingComponent name={"View More Info Button For Course with ID " + course.id} component={
+                                <Button name="View More Info Button" size="sm" color="primary" onClick={this.handleSessionClick}
+                                        tag={Link}
+                                        to={{
+                                            pathname: "/courses/" + course.id,
+                                            state: {
+                                                course: course
+                                            }
+                                        }}>View More Info</Button>
+                            }/>
                         </CardBody>
                     </Card>
                 </Col>
@@ -51,7 +57,9 @@ class CourseList extends Component {
                 <AppNavbar/>
                 <Container className="mt-5">
                     <div className="float-end">
-                        <Button color="success" tag={Link} to="/courses/edit/new">Add Course</Button>
+                        <ClickTrackingComponent name="Add New Course Button" component={
+                            <Button color="success" tag={Link} to="/courses/edit/new">Add Course</Button>
+                        }/>
                     </div>
                     <h3>Courses</h3>
                     <Container className="mt-3">
