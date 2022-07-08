@@ -14,7 +14,7 @@ export const App = () => {
 
     const { user } = useAuth0();
 
-    useNavigationTracking(user);
+    useNavigationTracking();
 
     return (
         <div>

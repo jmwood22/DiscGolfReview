@@ -1,7 +1,7 @@
 import React from "react";
 import {useAuth0} from "@auth0/auth0-react";
 
-export const ClickTrackingComponent = ({name, component}) => {
+export const ClickTrackingComponent = ({name, eventType, component}) => {
 
     const user = useAuth0();
 

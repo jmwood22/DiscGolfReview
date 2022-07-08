@@ -1,12 +1,11 @@
 package com.jmwood.sample.discgolfreview.controller;
 
-import com.jmwood.sample.discgolfreview.model.events.AuthEvent;
-import com.jmwood.sample.discgolfreview.model.events.ClickEvent;
-import com.jmwood.sample.discgolfreview.model.events.CourseEvent;
-import com.jmwood.sample.discgolfreview.model.events.NavEvent;
+import com.jmwood.sample.discgolfreview.model.events.*;
+import com.jmwood.sample.discgolfreview.repository.NavEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/events")
 public class EventController {
 
+    private final KafkaTemplate<String, Event> navEventKafkaTemplate;
+
+    private final NavEventRepository navEventRepository;
+
     @PostMapping("/auth")
     public ResponseEntity submitAuthEvent(@RequestBody AuthEvent authEvent) {
         log.info("Received request to submit the following AuthEvent for processing: {}", authEvent);
@@ -27,6 +30,8 @@ public class EventController {
     @PostMapping("/nav")
     public ResponseEntity submitNavEvent(@RequestBody NavEvent navEvent) {
         log.info("Received request to submit the following NavEvent for processing: {}", navEvent);
+        NavEvent persistedEvent = navEventRepository.save(navEvent);
+        navEventKafkaTemplate.send(navEventKafkaTemplate.getDefaultTopic(), navEvent.getUser().getId(), persistedEvent);
         return ResponseEntity.ok().build();
     }
 
