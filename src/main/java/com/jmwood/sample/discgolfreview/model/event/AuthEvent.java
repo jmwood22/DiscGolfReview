@@ -1,10 +1,12 @@
-package com.jmwood.sample.discgolfreview.model.events;
+package com.jmwood.sample.discgolfreview.model.event;
 
-import com.jmwood.sample.discgolfreview.model.events.enums.AuthEventType;
+import com.jmwood.sample.discgolfreview.model.event.enums.AuthEventType;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+@ToString(callSuper = true)
 @Document(collection = "AuthEvents")
 public class AuthEvent extends Event {
 

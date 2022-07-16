@@ -1,6 +1,6 @@
 package com.jmwood.sample.discgolfreview.kafka.consumer;
 
-import com.jmwood.sample.discgolfreview.model.events.Event;
+import com.jmwood.sample.discgolfreview.model.event.Event;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +36,7 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.jmwood.sample.discgolfreview.model.events");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.jmwood.sample.discgolfreview.model.event");
 
         return new DefaultKafkaConsumerFactory<>(props);
     }

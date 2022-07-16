@@ -1,4 +1,4 @@
-package com.jmwood.sample.discgolfreview.model.events;
+package com.jmwood.sample.discgolfreview.model.event;
 
 import lombok.Data;
 import lombok.ToString;

@@ -21,7 +21,7 @@ class CourseEdit extends Component {
         const course = props.location.state?.course;
         this.state = {
             course: course ? course : this.emptyCourse,
-            redirectPath: (course) ? '/courses/' + course.id : '/courses'
+            redirectPath: (course) ? '/courses/' + course.id : '/courses' //todo fix on create new course, state remaining
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -66,6 +66,7 @@ class CourseEdit extends Component {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'User': JSON.stringify(user),
+                    'Session-Id': sessionStorage.getItem("session_id"),
                     Authorization: 'Bearer ' + token
                 },
                 body: JSON.stringify(course),
@@ -80,6 +81,7 @@ class CourseEdit extends Component {
         });
     }
 
+    //todo fix refresh
     async remove(id) {
         const { getAccessTokenSilently, user } = this.props.auth0;
 
@@ -91,6 +93,8 @@ class CourseEdit extends Component {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
+                    'User': JSON.stringify(user),
+                    'Session-Id': sessionStorage.getItem("session_id"),
                     Authorization: 'Bearer ' + token
                 }
             })

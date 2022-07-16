@@ -54,6 +54,7 @@ class AddReview extends Component {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'User': JSON.stringify(user),
+                    'Session-Id': sessionStorage.getItem("session_id"),
                     Authorization: 'Bearer ' + token
                 },
                 body: JSON.stringify(review)

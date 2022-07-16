@@ -1,11 +1,13 @@
-package com.jmwood.sample.discgolfreview.model.events;
+package com.jmwood.sample.discgolfreview.model.event;
 
 import com.jmwood.sample.discgolfreview.model.Course;
-import com.jmwood.sample.discgolfreview.model.events.enums.CourseEventType;
+import com.jmwood.sample.discgolfreview.model.event.enums.CourseEventType;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+@ToString(callSuper = true)
 @Document(collection = "CourseEvents")
 public class CourseEvent extends Event {
 

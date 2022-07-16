@@ -1,7 +1,13 @@
 package com.jmwood.sample.discgolfreview.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jmwood.sample.discgolfreview.model.Course;
 import com.jmwood.sample.discgolfreview.model.Review;
+import com.jmwood.sample.discgolfreview.model.User;
+import com.jmwood.sample.discgolfreview.model.event.CourseEvent;
+import com.jmwood.sample.discgolfreview.model.event.enums.CourseEventType;
 import com.jmwood.sample.discgolfreview.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +27,7 @@ import java.util.List;
 public class CourseController {
 
     private final CourseRepository courseRepository;
+    private final EventController eventController;
 
     @GetMapping
     public List<Course> getCourses() {
@@ -36,14 +44,16 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity createCourse(@RequestBody Course course) throws URISyntaxException {
+    public ResponseEntity createCourse(@RequestBody Course course, @RequestHeader("Session-Id") String sessionId, @RequestHeader("User") String userJson) throws URISyntaxException {
         log.info("Received request to create Course: {}", course);
+        CourseEvent event = createEvent(course, sessionId, extractUserFromJson(userJson), CourseEventType.ADD_NEW_COURSE);
         Course savedCourse = courseRepository.save(course);
+        eventController.submitCourseEvent(event);
         return ResponseEntity.created(new URI("/courses/" + savedCourse.getId())).body(savedCourse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateCourse(@PathVariable String id, @RequestBody Course course) {
+    public ResponseEntity updateCourse(@PathVariable String id, @RequestBody Course course, @RequestHeader("Session-Id") String sessionId, @RequestHeader("User") String userJson) {
         log.info("Received request to update Course with id {} to Course: {}", id, course);
         Course currentCourse = courseRepository.findById(id).orElseThrow(RuntimeException::new);
         currentCourse.setName(course.getName());
@@ -53,22 +63,29 @@ public class CourseController {
         currentCourse.setAmenities(course.getAmenities());
         currentCourse = courseRepository.save(currentCourse);
 
+        CourseEvent event = createEvent(currentCourse, sessionId, extractUserFromJson(userJson), CourseEventType.EDIT_COURSE_DETAIL);
+        eventController.submitCourseEvent(event);
         return ResponseEntity.ok(currentCourse);
     }
 
     @PostMapping("/reviews/{id}")
-    public ResponseEntity addReview(@PathVariable String id, @RequestBody Review review) {
+    public ResponseEntity addReview(@PathVariable String id, @RequestBody Review review, @RequestHeader("Session-Id") String sessionId, @RequestHeader("User") String userJson) {
         log.info("Received request to add the following review to Course with id {}: {}", id, review);
         Course course = courseRepository.findById(id).orElseThrow(RuntimeException::new);
         course.addReview(review);
         course = courseRepository.save(course);
 
+        CourseEvent event = createEvent(course, sessionId, extractUserFromJson(userJson), CourseEventType.ADD_REVIEW);
+        eventController.submitCourseEvent(event);
+
         return ResponseEntity.ok(course);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteCourse(@PathVariable String id) {
+    public ResponseEntity deleteCourse(@PathVariable String id, @RequestHeader("Session-Id") String sessionId, @RequestHeader("User") String userJson) {
         log.info("Received request to delete Course with id {}", id);
+        CourseEvent event = createEvent(courseRepository.findById(id).orElseThrow(RuntimeException::new), sessionId, extractUserFromJson(userJson), CourseEventType.DELETE_COURSE);
+        eventController.submitCourseEvent(event);
         courseRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -88,5 +105,24 @@ public class CourseController {
                 .defaultImageUrl("https://i.imgur.com/lI9MXsk.jpeg")
                 .amenities("Sample amenities")
                 .build();
+    }
+
+    private User extractUserFromJson(String userJson) {
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            return mapper.readValue(userJson, User.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private CourseEvent createEvent(Course course, String sessionId, User user, CourseEventType type) {
+        CourseEvent event = new CourseEvent();
+        event.setSessionId(sessionId);
+        event.setUser(user);
+        event.setDate(new Date());
+        event.setCourse(course);
+        event.setType(type);
+        return event;
     }
 }

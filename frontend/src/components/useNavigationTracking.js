@@ -19,7 +19,7 @@ export const useNavigationTracking = () => {
                     date: +new Date().getTime(),
                     path: location.pathname,
                     rawLocationJson: JSON.stringify(location),
-                    token
+                    sessionId: sessionStorage.getItem("session_id")
                 }
                 if (user) {
                     fetch("/events/nav", {

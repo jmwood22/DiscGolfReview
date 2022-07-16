@@ -1,6 +1,6 @@
 package com.jmwood.sample.discgolfreview.kafka.consumer;
 
-import com.jmwood.sample.discgolfreview.model.events.NavEvent;
+import com.jmwood.sample.discgolfreview.model.event.NavEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;

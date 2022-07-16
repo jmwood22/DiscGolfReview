@@ -1,4 +1,4 @@
-package com.jmwood.sample.discgolfreview.model.events;
+package com.jmwood.sample.discgolfreview.model.event;
 
 import com.jmwood.sample.discgolfreview.model.User;
 import lombok.Data;
@@ -12,7 +12,7 @@ public class Event implements Serializable {
 
     @Id
     private String id;
+    private String sessionId;
     private User user;
     private Date date;
-    private String token;
 }
