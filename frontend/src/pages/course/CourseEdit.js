@@ -4,7 +4,7 @@ import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import {AppNavbar} from '../../components/AppNavbar';
 import {withAuth0} from "@auth0/auth0-react";
 import configData from "../../config.json"
-import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
+import {ClickTrackingComponent} from "../../components/tracking/ClickTrackingComponent";
 
 class CourseEdit extends Component {
 
@@ -19,9 +19,11 @@ class CourseEdit extends Component {
     constructor(props) {
         super(props);
         const course = props.location.state?.course;
+        console.log("Props", props);
+        console.log("course: ", course);
         this.state = {
             course: course ? course : this.emptyCourse,
-            redirectPath: (course) ? '/courses/' + course.id : '/courses' //todo fix on create new course, state remaining
+            redirectPath: (course) ? '/courses/' + course.id : '/courses'
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -81,8 +83,7 @@ class CourseEdit extends Component {
         });
     }
 
-    //todo fix refresh
-    async remove(id) {
+    remove(id) {
         const { getAccessTokenSilently, user } = this.props.auth0;
 
         getAccessTokenSilently({
@@ -97,13 +98,15 @@ class CourseEdit extends Component {
                     'Session-Id': sessionStorage.getItem("session_id"),
                     Authorization: 'Bearer ' + token
                 }
-            })
+            }).then(() => this.props.history.push('/courses'))
         });
     }
 
     render() {
         const {course, redirectPath} = this.state;
-        const title = <h2>{this.props.match.params.id ? 'Edit Course' : 'Add  Course'}</h2>
+        const { user } = this.props.auth0;
+        const isNewForm = this.props.match.params.id !== 'new';
+        const title = <h2>{ isNewForm ? 'Edit Course' : 'Add  Course'}</h2>
 
         return <div>
             <AppNavbar/>
@@ -140,10 +143,11 @@ class CourseEdit extends Component {
                             <Button color="primary" type="submit">Save</Button>
                         }/>
                         {' '}
+                        { isNewForm && user.sub === course.author?.sub &&
                         <ClickTrackingComponent name={"Edit Course Delete Button for Course with ID " + course.id} component={
-                            <Button color="danger" onClick={() => this.remove(course.id)} tag={Link} to="/courses">Delete</Button>
+                            <Button color="danger" onClick={() => this.remove(course.id)}>Delete</Button>
                         }/>
-                        {' '}
+                        }{' '}
                         <ClickTrackingComponent name={"Edit Course Cancel Button for Course with ID " + course.id} component={
                             <Button color="secondary" tag={Link} to={redirectPath}>Cancel</Button>
                         }/>

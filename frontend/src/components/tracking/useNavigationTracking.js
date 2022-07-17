@@ -1,40 +1,37 @@
-import React from "react";
+import {useLocation} from "react-router-dom";
+import {useEffect} from "react";
 import {useAuth0} from "@auth0/auth0-react";
-import configData from "../config.json";
+import configData from "../../config.json"
 
-export const ClickTrackingComponent = ({name, component}) => {
 
+export const useNavigationTracking = () => {
+    const location = useLocation();
     const {user, getAccessTokenSilently} = useAuth0();
 
-    function trackClick(event) {
+    useEffect(() => {
+
         getAccessTokenSilently({
             audience: configData.audience
         })
             .then(token => {
-                const clickEvent = {
+                const navEvent = {
                     user,
                     date: +new Date().getTime(),
-                    elementName: name,
-                    // rawEventJson: JSON.stringify(event.target),
+                    path: location.pathname,
+                    rawLocationJson: JSON.stringify(location),
                     sessionId: sessionStorage.getItem("session_id")
                 }
                 if (user) {
-                    fetch("/events/click", {
+                    fetch("/events/nav", {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         },
-                        body: JSON.stringify(clickEvent)
+                        body: JSON.stringify(navEvent)
                     })
                 }
             })
-    }
-
-    return (
-        <span onClick={trackClick}>
-            {component}
-        </span>
-    );
+    }, [location, user])
 }

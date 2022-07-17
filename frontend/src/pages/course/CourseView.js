@@ -15,7 +15,7 @@ import {
     UncontrolledAccordion
 } from "reactstrap";
 import {Review} from "../../components/Review";
-import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
+import {ClickTrackingComponent} from "../../components/tracking/ClickTrackingComponent";
 
 class CourseView extends Component {
 

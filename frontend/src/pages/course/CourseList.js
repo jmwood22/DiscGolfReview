@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Container, Row} from 'reactstrap';
 import {AppNavbar} from '../../components/AppNavbar';
 import {Link} from 'react-router-dom';
-import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
+import {ClickTrackingComponent} from "../../components/tracking/ClickTrackingComponent";
 
 class CourseList extends Component {
 

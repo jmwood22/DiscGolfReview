@@ -3,7 +3,7 @@ import '../App.css';
 import {AppNavbar} from '../components/AppNavbar';
 import {Link} from 'react-router-dom';
 import {Button, Container, UncontrolledCarousel} from 'reactstrap';
-import {ClickTrackingComponent} from "../components/ClickTrackingComponent";
+import {ClickTrackingComponent} from "../components/tracking/ClickTrackingComponent";
 
 const exampleCourses = [
     {

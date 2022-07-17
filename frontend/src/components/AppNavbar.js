@@ -2,7 +2,7 @@ import React from 'react';
 import {Container, Nav, Navbar, NavbarBrand, NavItem, NavLink} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {AuthenticationButton} from "./auth/Authentication-Button";
-import {ClickTrackingComponent} from "./ClickTrackingComponent";
+import {ClickTrackingComponent} from "./tracking/ClickTrackingComponent";
 
 export const AppNavbar = () => {
 

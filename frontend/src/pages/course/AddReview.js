@@ -4,7 +4,7 @@ import configData from "../../config.json"
 import {AppNavbar} from "../../components/AppNavbar";
 import {Button, Container, Form, FormGroup, Input, Label} from "reactstrap";
 import {Link} from "react-router-dom";
-import {ClickTrackingComponent} from "../../components/ClickTrackingComponent";
+import {ClickTrackingComponent} from "../../components/tracking/ClickTrackingComponent";
 
 class AddReview extends Component {
 
