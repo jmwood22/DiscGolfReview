@@ -5,8 +5,11 @@ export const LoginButton = () => {
     const { loginWithRedirect } = useAuth0();
 
     function handleLogin(event) {
-        loginWithRedirect()
-            .then(() => console.log("Login Successful"))
+        loginWithRedirect({
+            appState: {
+                returnTo: window.location.pathname
+            }
+        })
     }
 
     return (

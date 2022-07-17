@@ -9,6 +9,7 @@ import {ProtectedRoute} from "./components/auth/ProtectedRoute";
 import Review from "./pages/course/AddReview";
 import {useNavigationTracking} from "./components/useNavigationTracking";
 import {useAuth0} from "@auth0/auth0-react";
+import {TrackLoginEvent} from "./components/auth/TrackLoginEvent";
 
 export const App = () => {
 
@@ -24,6 +25,7 @@ export const App = () => {
             <ProtectedRoute path='/courses/edit/review/:id' component={Review}/>
             <ProtectedRoute path='/courses/edit/:id' component={CourseEdit}/>
             <Route path='/courses/:id' component={CourseView}/>
+            <ProtectedRoute path='/loginredirect' component={TrackLoginEvent}/>
           </Switch>
         </div>
     )

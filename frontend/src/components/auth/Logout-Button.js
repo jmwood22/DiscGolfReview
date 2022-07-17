@@ -1,14 +1,38 @@
 import {useAuth0} from "@auth0/auth0-react";
 import React from "react";
+import configData from "../../config.json";
 
 export const LogoutButton = () => {
-    const { logout } = useAuth0();
+    const { user, getAccessTokenSilently, logout } = useAuth0();
 
     function handleLogout(event) {
-        console.log("Logging out user");
-        logout({
-            returnTo: window.location.origin
-        });
+        getAccessTokenSilently({
+            audience: configData.audience
+        }).then(token => {
+            if(user) {
+                const loginEvent = {
+                    user,
+                    date: +new Date().getTime(),
+                    sessionId: sessionStorage.getItem("session_id"),
+                    type: "LOGOUT"
+                }
+
+                fetch("/events/auth", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + token
+                    },
+                    body: JSON.stringify(loginEvent)
+                }).then(() => {
+                    sessionStorage.clear();
+                    logout({
+                        returnTo: window.location.origin
+                    });
+                })
+            }
+        })
     }
 
     return (

@@ -9,18 +9,12 @@ class CourseList extends Component {
     constructor(props) {
         super(props);
         this.state = {courses: []};
-
-        this.handleSessionClick = this.handleSessionClick.bind(this);
     }
 
     componentDidMount() {
         fetch('/courses')
             .then(response => response.json())
             .then(data => this.setState({courses: data}));
-    }
-
-    handleSessionClick(event) {
-        console.log("Click: ", event);
     }
 
     render() {
@@ -37,7 +31,7 @@ class CourseList extends Component {
                             <CardTitle>{course.name}</CardTitle>
                             <CardText>{course.description}</CardText>
                             <ClickTrackingComponent name={"View More Info Button For Course with ID " + course.id} component={
-                                <Button name="View More Info Button" size="sm" color="primary" onClick={this.handleSessionClick}
+                                <Button name="View More Info Button" size="sm" color="primary"
                                         tag={Link}
                                         to={{
                                             pathname: "/courses/" + course.id,

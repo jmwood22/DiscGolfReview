@@ -4,29 +4,26 @@ import './index.css';
 import {App} from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Auth0Provider} from "@auth0/auth0-react";
 
-import configData from "./config.json";
 import {BrowserRouter} from "react-router-dom";
-
-const providerConfig = {
-    domain: configData.domain,
-    clientId: configData.clientId,
-    audience: configData.audience,
-    redirectUri: window.location.origin,
-    useRefreshTokens: true,
-    cacheLocation: "localstorage"
-};
+import configData from "./config.json";
+import {Auth0ProviderWithRedirectCallback} from "./components/auth/Auth0ProviderWithRedirectCallback";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+
 root.render(
-  <React.StrictMode>
-      <Auth0Provider {...providerConfig}>
-          <BrowserRouter>
-              <App />
-          </BrowserRouter>
-      </Auth0Provider>
-  </React.StrictMode>
+    <BrowserRouter>
+        <Auth0ProviderWithRedirectCallback
+            domain={configData.domain}
+            clientId={configData.clientId}
+            audience={configData.audience}
+            redirectUri={window.location.origin}
+            cacheLocation="localstorage"
+        >
+            <App/>
+        </Auth0ProviderWithRedirectCallback>
+    </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
