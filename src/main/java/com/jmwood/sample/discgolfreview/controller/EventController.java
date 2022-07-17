@@ -58,7 +58,7 @@ public class EventController {
     public ResponseEntity submitCourseEvent(@RequestBody CourseEvent courseEvent) {
         log.info("Received request to submit the following CourseEvent for processing: {}", courseEvent);
         CourseEvent persistedEvent = courseEventRepository.save(courseEvent);
-        courseEventKafkaTemplate.send(clickEventKafkaTemplate.getDefaultTopic(), courseEvent.getUser().getId(), persistedEvent);
+        courseEventKafkaTemplate.send(courseEventKafkaTemplate.getDefaultTopic(), courseEvent.getUser().getId(), persistedEvent);
         return ResponseEntity.ok().build();
     }
 }

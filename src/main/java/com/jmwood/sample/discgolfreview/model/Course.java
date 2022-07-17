@@ -1,17 +1,22 @@
 package com.jmwood.sample.discgolfreview.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "courses")
-public class Course {
+public class Course implements Serializable {
 
     @Id
     private String id;
