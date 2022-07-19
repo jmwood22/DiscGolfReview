@@ -13,6 +13,7 @@ export const TrackLoginEvent = (props) => {
     }).then(token => {
         if(user) {
             const loginEvent = {
+                "@class": "com.jmwood.sample.discgolfreview.model.event.AuthEvent",
                 user,
                 date: +new Date().getTime(),
                 sessionId: sessionStorage.getItem("session_id"),

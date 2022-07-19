@@ -15,6 +15,7 @@ export const useNavigationTracking = () => {
         })
             .then(token => {
                 const navEvent = {
+                    "@class": "com.jmwood.sample.discgolfreview.model.event.NavEvent",
                     user,
                     date: +new Date().getTime(),
                     path: location.pathname,

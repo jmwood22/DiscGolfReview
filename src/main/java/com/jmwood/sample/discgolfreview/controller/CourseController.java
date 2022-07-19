@@ -117,12 +117,12 @@ public class CourseController {
     }
 
     private CourseEvent createEvent(Course course, String sessionId, User user, CourseEventType type) {
-        CourseEvent event = new CourseEvent();
-        event.setSessionId(sessionId);
-        event.setUser(user);
-        event.setDate(new Date());
-        event.setCourse(course);
-        event.setType(type);
-        return event;
+        return CourseEvent.builder()
+                .sessionId(sessionId)
+                .user(user)
+                .date(new Date())
+                .course(course)
+                .type(type)
+                .build();
     }
 }

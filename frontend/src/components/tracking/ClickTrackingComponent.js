@@ -12,6 +12,7 @@ export const ClickTrackingComponent = ({name, component}) => {
         })
             .then(token => {
                 const clickEvent = {
+                    "@class": "com.jmwood.sample.discgolfreview.model.event.ClickEvent",
                     user,
                     date: +new Date().getTime(),
                     elementName: name,
