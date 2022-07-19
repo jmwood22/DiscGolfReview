@@ -1,9 +1,6 @@
 package com.jmwood.sample.discgolfreview.kafka.streams;
 
-import com.jmwood.sample.discgolfreview.model.event.AuthEvent;
-import com.jmwood.sample.discgolfreview.model.event.ClickEvent;
-import com.jmwood.sample.discgolfreview.model.event.CourseEvent;
-import com.jmwood.sample.discgolfreview.model.event.NavEvent;
+import com.jmwood.sample.discgolfreview.model.event.Event;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
@@ -33,31 +30,31 @@ public class StreamConfiguration {
     }
 
     @Bean
-    Topic<String, AuthEvent> authEventTopic(@Value("${kafka.auth.event.topic}") String topicName) {
-        return new Topic<String, AuthEvent>(topicName, Serdes.String(), getJsonSerde());
+    Topic<String, Event> authEventTopic(@Value("${kafka.auth.event.topic}") String topicName) {
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
     }
 
     @Bean
-    Topic<String, NavEvent> navEventTopic(@Value("${kafka.nav.event.topic}") String topicName) {
-        return new Topic<String, NavEvent>(topicName, Serdes.String(), getJsonSerde());
+    Topic<String, Event> navEventTopic(@Value("${kafka.nav.event.topic}") String topicName) {
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
     }
 
     @Bean
-    Topic<String, CourseEvent> courseEventTopic(@Value("${kafka.course.event.topic}") String topicName) {
-        return new Topic<String, CourseEvent>(topicName, Serdes.String(), getJsonSerde());
+    Topic<String, Event> courseEventTopic(@Value("${kafka.course.event.topic}") String topicName) {
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
     }
 
     @Bean
-    Topic<String, ClickEvent> clickEventTopic(@Value("${kafka.click.event.topic}") String topicName) {
-        return new Topic<String, ClickEvent>(topicName, Serdes.String(), getJsonSerde());
+    Topic<String, Event> clickEventTopic(@Value("${kafka.click.event.topic}") String topicName) {
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
     }
 
-    private Serde getJsonSerde() {
-        return Serdes.serdeFrom(new JsonSerializer<>(), jsonDeserializer());
+    public static Serde<Event> getJsonSerde() {
+        return Serdes.serdeFrom(new JsonSerializer<Event>(), jsonDeserializer());
     }
 
-    private JsonDeserializer jsonDeserializer() {
-        JsonDeserializer jsonDeserializer = new JsonDeserializer<>();
+    private static JsonDeserializer<Event> jsonDeserializer() {
+        JsonDeserializer<Event> jsonDeserializer = new JsonDeserializer<Event>();
         return jsonDeserializer.trustedPackages("com.jmwood.sample.discgolfreview.model.event");
     }
 }
