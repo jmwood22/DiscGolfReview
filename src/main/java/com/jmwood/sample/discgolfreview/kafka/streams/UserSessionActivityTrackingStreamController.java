@@ -35,6 +35,8 @@ public class UserSessionActivityTrackingStreamController {
     private final Topic<String, Event> courseEventTopic;
     private final Topic<String, Event> clickEventTopic;
 
+    private final SessionAggregator sessionAggregator;
+
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
 
@@ -59,8 +61,6 @@ public class UserSessionActivityTrackingStreamController {
                 .merge(courseEventStream)
                 .merge(clickEventStream, Named.as("ALL_EVENTS_STREAM"));
 
-        Aggregator<String, Event, SessionRollup> sessionAggregator = new SessionAggregator();
-
         Serde<SessionRollup> sessionRollupSerde = Serdes.serdeFrom(new JsonSerializer<SessionRollup>(), new JsonDeserializer<SessionRollup>(SessionRollup.class));
 
         KTable<String, SessionRollup> sessionRollupKTable = allEvents
@@ -70,7 +70,8 @@ public class UserSessionActivityTrackingStreamController {
                                 .withKeySerde(Serdes.String())
                                 .withValueSerde(sessionRollupSerde));
 
-        sessionRollupKTable.toStream().peek(this::logConsume);
+        sessionRollupKTable.toStream()
+                .peek(this::logConsume);
 
         Topology topology = builder.build();
         log.info("\n{}", topology.describe());
