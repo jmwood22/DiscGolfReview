@@ -15,29 +15,31 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    String bootstrapServer = "localhost:9092";
+  String bootstrapServer = "localhost:9092";
 
-    String groupId = "sample-group-id";
+  String groupId = "sample-group-id";
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Event> concurrentKafkaListenerContainerFactory(ConsumerFactory<String, Event> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, Event> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
-        factory.setBatchListener(true);
-        factory.setConcurrency(1);
-        return factory;
-    }
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, Event>
+      concurrentKafkaListenerContainerFactory(ConsumerFactory<String, Event> consumerFactory) {
+    ConcurrentKafkaListenerContainerFactory<String, Event> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(consumerFactory);
+    factory.setBatchListener(true);
+    factory.setConcurrency(1);
+    return factory;
+  }
 
-    @Bean
-    public ConsumerFactory<String, Event> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
+  @Bean
+  public ConsumerFactory<String, Event> consumerFactory() {
+    Map<String, Object> props = new HashMap<>();
 
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.jmwood.sample.discgolfreview.model.event");
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+    props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.jmwood.sample.discgolfreview.model.event");
 
-        return new DefaultKafkaConsumerFactory<>(props);
-    }
+    return new DefaultKafkaConsumerFactory<>(props);
+  }
 }

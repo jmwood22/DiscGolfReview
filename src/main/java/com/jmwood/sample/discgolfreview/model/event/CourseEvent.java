@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "CourseEvents")
 public class CourseEvent extends Event {
 
-    private Course course;
-    private String rawJson;
-    private CourseEventType type;
+  private Course course;
+  private String rawJson;
+  private CourseEventType type;
 }

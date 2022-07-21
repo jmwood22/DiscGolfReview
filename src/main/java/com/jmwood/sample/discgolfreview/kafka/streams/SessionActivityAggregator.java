@@ -13,21 +13,21 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class SessionActivityAggregator implements Aggregator<String, Event, SessionActivity> {
 
-    private final SessionActivityRepository sessionActivityRepository;
+  private final SessionActivityRepository sessionActivityRepository;
 
-    @Override
-    public SessionActivity apply(String sessionId, Event event, SessionActivity sessionActivity) {
+  @Override
+  public SessionActivity apply(String sessionId, Event event, SessionActivity sessionActivity) {
 
-        if (sessionActivity.getId() == null) {
-            sessionActivity.setId(sessionId);
-            sessionActivity.setUser(event.getUser());
-            sessionActivity.setEvents(new ArrayList<>());
-        }
-
-        sessionActivity.addEvent(event);
-
-        sessionActivityRepository.save(sessionActivity);
-
-        return sessionActivity;
+    if (sessionActivity.getId() == null) {
+      sessionActivity.setId(sessionId);
+      sessionActivity.setUser(event.getUser());
+      sessionActivity.setEvents(new ArrayList<>());
     }
+
+    sessionActivity.addEvent(event);
+
+    sessionActivityRepository.save(sessionActivity);
+
+    return sessionActivity;
+  }
 }

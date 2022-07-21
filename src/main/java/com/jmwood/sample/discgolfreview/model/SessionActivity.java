@@ -16,12 +16,11 @@ import java.util.List;
 @Document(collection = "sessionActivity")
 public class SessionActivity implements Serializable {
 
-    @Id
-    private String id;
-    private User user;
-    private List<Event> events;
+  @Id private String id;
+  private User user;
+  private List<Event> events;
 
-    public void addEvent(Event event) {
-        events.add(event);
-    }
+  public void addEvent(Event event) {
+    events.add(event);
+  }
 }

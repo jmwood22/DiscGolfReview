@@ -12,23 +12,22 @@ import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 import java.util.Date;
 
-//@Data
+// @Data
 @Getter
 @Setter
 @ToString
 @SuperBuilder
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AuthEvent.class, name = "@class"),
-        @JsonSubTypes.Type(value = NavEvent.class, name = "@class"),
-        @JsonSubTypes.Type(value = CourseEvent.class, name = "@class"),
-        @JsonSubTypes.Type(value = ClickEvent.class, name = "@class")
+  @JsonSubTypes.Type(value = AuthEvent.class, name = "@class"),
+  @JsonSubTypes.Type(value = NavEvent.class, name = "@class"),
+  @JsonSubTypes.Type(value = CourseEvent.class, name = "@class"),
+  @JsonSubTypes.Type(value = ClickEvent.class, name = "@class")
 })
 public abstract class Event implements Serializable {
 
-    @Id
-    private String id;
-    private String sessionId;
-    private User user;
-    private Date date;
+  @Id private String id;
+  private String sessionId;
+  private User user;
+  private Date date;
 }

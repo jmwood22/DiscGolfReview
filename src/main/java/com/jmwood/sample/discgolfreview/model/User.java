@@ -9,18 +9,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
-
 @Data
 @Jacksonized
 @Builder
 @Document(collection = "users")
 public class User implements Serializable {
 
-    @Id
-    @JsonProperty("sub")
-    private String id;
-    private String name;
-    private String nickname;
-    private String email;
+  @Id
+  @JsonProperty("sub")
+  private String id;
 
+  private String name;
+  private String nickname;
+  private String email;
 }

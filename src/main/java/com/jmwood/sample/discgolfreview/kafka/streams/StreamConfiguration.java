@@ -18,44 +18,46 @@ import java.util.Map;
 @Configuration
 public class StreamConfiguration {
 
-    @Bean
-    KafkaStreamsConfiguration streamsConfiguration(
-            @Value("${spring.kafka.streams.application-id}") String applicationId,
-            @Value("${spring.kafka.streams.bootstrap-servers}") String bootstrapServers) {
-        Map<String, Object> props = new HashMap<>();
+  @Bean
+  KafkaStreamsConfiguration streamsConfiguration(
+      @Value("${spring.kafka.streams.application-id}") String applicationId,
+      @Value("${spring.kafka.streams.bootstrap-servers}") String bootstrapServers) {
+    Map<String, Object> props = new HashMap<>();
 
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+    props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
-        return new KafkaStreamsConfiguration(props);
-    }
+    return new KafkaStreamsConfiguration(props);
+  }
 
-    @Bean
-    Topic<String, Event> authEventTopic(@Value("${kafka.auth.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
-    }
+  @Bean
+  Topic<String, Event> authEventTopic(@Value("${kafka.auth.event.topic}") String topicName) {
+    return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
+  }
 
-    @Bean
-    Topic<String, Event> navEventTopic(@Value("${kafka.nav.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
-    }
+  @Bean
+  Topic<String, Event> navEventTopic(@Value("${kafka.nav.event.topic}") String topicName) {
+    return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
+  }
 
-    @Bean
-    Topic<String, Event> courseEventTopic(@Value("${kafka.course.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
-    }
+  @Bean
+  Topic<String, Event> courseEventTopic(@Value("${kafka.course.event.topic}") String topicName) {
+    return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
+  }
 
-    @Bean
-    Topic<String, Event> clickEventTopic(@Value("${kafka.click.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
-    }
+  @Bean
+  Topic<String, Event> clickEventTopic(@Value("${kafka.click.event.topic}") String topicName) {
+    return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
+  }
 
-    @Bean
-    Topic<String, SessionActivity> sessionActivityTopic(@Value("${kafka.sessionActivity.topic}") String topicName) {
-        return new Topic<String, SessionActivity>(topicName, Serdes.String(), getJsonSerdeForClass(SessionActivity.class));
-    }
+  @Bean
+  Topic<String, SessionActivity> sessionActivityTopic(
+      @Value("${kafka.sessionActivity.topic}") String topicName) {
+    return new Topic<String, SessionActivity>(
+        topicName, Serdes.String(), getJsonSerdeForClass(SessionActivity.class));
+  }
 
-    public static <T> Serde<T> getJsonSerdeForClass(Class<T> clazz) {
-        return Serdes.serdeFrom(new JsonSerializer<T>(), new JsonDeserializer<T>(clazz));
-    }
+  public static <T> Serde<T> getJsonSerdeForClass(Class<T> clazz) {
+    return Serdes.serdeFrom(new JsonSerializer<T>(), new JsonDeserializer<T>(clazz));
+  }
 }
