@@ -1,5 +1,6 @@
 package com.jmwood.sample.discgolfreview.kafka.streams;
 
+import com.jmwood.sample.discgolfreview.model.SessionActivity;
 import com.jmwood.sample.discgolfreview.model.event.Event;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -31,30 +32,30 @@ public class StreamConfiguration {
 
     @Bean
     Topic<String, Event> authEventTopic(@Value("${kafka.auth.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
     }
 
     @Bean
     Topic<String, Event> navEventTopic(@Value("${kafka.nav.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
     }
 
     @Bean
     Topic<String, Event> courseEventTopic(@Value("${kafka.course.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
     }
 
     @Bean
     Topic<String, Event> clickEventTopic(@Value("${kafka.click.event.topic}") String topicName) {
-        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerde());
+        return new Topic<String, Event>(topicName, Serdes.String(), getJsonSerdeForClass(Event.class));
     }
 
-    public static Serde<Event> getJsonSerde() {
-        return Serdes.serdeFrom(new JsonSerializer<Event>(), jsonDeserializer());
+    @Bean
+    Topic<String, SessionActivity> sessionActivityTopic(@Value("${kafka.sessionActivity.topic}") String topicName) {
+        return new Topic<String, SessionActivity>(topicName, Serdes.String(), getJsonSerdeForClass(SessionActivity.class));
     }
 
-    private static JsonDeserializer<Event> jsonDeserializer() {
-        JsonDeserializer<Event> jsonDeserializer = new JsonDeserializer<Event>();
-        return jsonDeserializer.trustedPackages("com.jmwood.sample.discgolfreview.model.event");
+    public static <T> Serde<T> getJsonSerdeForClass(Class<T> clazz) {
+        return Serdes.serdeFrom(new JsonSerializer<T>(), new JsonDeserializer<T>(clazz));
     }
 }

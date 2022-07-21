@@ -1,11 +1,9 @@
 package com.jmwood.sample.discgolfreview.kafka.streams;
 
-import com.jmwood.sample.discgolfreview.model.SessionRollup;
+import com.jmwood.sample.discgolfreview.model.SessionActivity;
 import com.jmwood.sample.discgolfreview.model.event.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -13,13 +11,10 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.HashMap;
 
 @Slf4j
 @Component
@@ -35,7 +30,9 @@ public class UserSessionActivityTrackingStreamController {
     private final Topic<String, Event> courseEventTopic;
     private final Topic<String, Event> clickEventTopic;
 
-    private final SessionAggregator sessionAggregator;
+    private final Topic<String, SessionActivity> sessionActivityTopic;
+
+    private final SessionActivityAggregator sessionActivityAggregator;
 
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
@@ -61,17 +58,18 @@ public class UserSessionActivityTrackingStreamController {
                 .merge(courseEventStream)
                 .merge(clickEventStream, Named.as("ALL_EVENTS_STREAM"));
 
-        Serde<SessionRollup> sessionRollupSerde = Serdes.serdeFrom(new JsonSerializer<SessionRollup>(), new JsonDeserializer<SessionRollup>(SessionRollup.class));
-
-        KTable<String, SessionRollup> sessionRollupKTable = allEvents
+        KTable<String, SessionActivity> sessionActivityKTable = allEvents
                 .groupByKey()
-                .aggregate(() -> new SessionRollup(new HashMap<>()), sessionAggregator,
-                        Materialized.<String, SessionRollup, KeyValueStore<Bytes, byte[]>>as("Session-Rollup")
-                                .withKeySerde(Serdes.String())
-                                .withValueSerde(sessionRollupSerde));
+                .aggregate(
+                        SessionActivity::new,
+                        sessionActivityAggregator,
+                        Materialized.<String, SessionActivity, KeyValueStore<Bytes, byte[]>>as("Session-Activity")
+                                .withKeySerde(sessionActivityTopic.getKeySerde())
+                                .withValueSerde(sessionActivityTopic.getValueSerde()));
 
-        sessionRollupKTable.toStream()
-                .peek(this::logConsume);
+        sessionActivityKTable.toStream()
+                .peek(this::logProduce)
+                .to(sessionActivityTopic.getName(), producedWith(sessionActivityTopic));
 
         Topology topology = builder.build();
         log.info("\n{}", topology.describe());

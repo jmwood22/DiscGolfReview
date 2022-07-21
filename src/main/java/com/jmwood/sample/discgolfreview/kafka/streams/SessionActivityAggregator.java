@@ -1,7 +1,6 @@
 package com.jmwood.sample.discgolfreview.kafka.streams;
 
 import com.jmwood.sample.discgolfreview.model.SessionActivity;
-import com.jmwood.sample.discgolfreview.model.SessionRollup;
 import com.jmwood.sample.discgolfreview.model.event.Event;
 import com.jmwood.sample.discgolfreview.repository.SessionActivityRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,23 +8,26 @@ import org.apache.kafka.streams.kstream.Aggregator;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class SessionAggregator implements Aggregator<String, Event, SessionRollup> {
+public class SessionActivityAggregator implements Aggregator<String, Event, SessionActivity> {
 
     private final SessionActivityRepository sessionActivityRepository;
 
     @Override
-    public SessionRollup apply(String sessionId, Event event, SessionRollup sessionRollup) {
+    public SessionActivity apply(String sessionId, Event event, SessionActivity sessionActivity) {
 
-        final Map<String, SessionActivity> allSessionActivities = sessionRollup.getSessionActivityMap();
-        final SessionActivity sessionActivity = allSessionActivities.computeIfAbsent(sessionId, k -> new SessionActivity(sessionId, event.getUser(), new ArrayList<>()));
+        if (sessionActivity.getId() == null) {
+            sessionActivity.setId(sessionId);
+            sessionActivity.setUser(event.getUser());
+            sessionActivity.setEvents(new ArrayList<>());
+        }
+
         sessionActivity.addEvent(event);
 
         sessionActivityRepository.save(sessionActivity);
 
-        return sessionRollup;
+        return sessionActivity;
     }
 }
