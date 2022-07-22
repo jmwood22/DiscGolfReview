@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class UserSessionActivityTrackingStreamControllerTest {
+public class UserSessionActivityTrackingStreamControllerTests {
 
   private static String TEST_AUTH_EVENT_TOPIC = "test-auth-event-topic";
   private static String TEST_NAV_EVENT_TOPIC = "test-nav-event-topic";
