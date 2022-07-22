@@ -7,7 +7,6 @@ import com.jmwood.sample.discgolfreview.model.event.*;
 import com.jmwood.sample.discgolfreview.model.event.enums.AuthEventType;
 import com.jmwood.sample.discgolfreview.model.event.enums.CourseEventType;
 import com.jmwood.sample.discgolfreview.repository.SessionActivityRepository;
-import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
@@ -31,18 +30,18 @@ import static org.junit.Assert.assertEquals;
 
 public class UserSessionActivityTrackingStreamControllerTests {
 
-  private static String TEST_AUTH_EVENT_TOPIC = "test-auth-event-topic";
-  private static String TEST_NAV_EVENT_TOPIC = "test-nav-event-topic";
-  private static String TEST_COURSE_EVENT_TOPIC = "test-course-event-topic";
-  private static String TEST_CLICK_EVENT_TOPIC = "test-click-event-topic";
-  private static String TEST_SESSION_ACTIVITY_TOPIC = "test-session-activity-topic";
+  private static final String TEST_AUTH_EVENT_TOPIC = "test-auth-event-topic";
+  private static final String TEST_NAV_EVENT_TOPIC = "test-nav-event-topic";
+  private static final String TEST_COURSE_EVENT_TOPIC = "test-course-event-topic";
+  private static final String TEST_CLICK_EVENT_TOPIC = "test-click-event-topic";
+  private static final String TEST_SESSION_ACTIVITY_TOPIC = "test-session-activity-topic";
   private TopologyTestDriver topologyTestDriver;
   private TestInputTopic<String, Event> authEventTestInputTopic;
   private TestInputTopic<String, Event> navEventTestInputTopic;
   private TestInputTopic<String, Event> courseEventTestInputTopic;
   private TestInputTopic<String, Event> clickEventTestInputTopic;
   private TestOutputTopic<String, SessionActivity> sessionActivityTestOutputTopic;
-  private SessionActivityRepository mockSessionActivityRepository =
+  private final SessionActivityRepository mockSessionActivityRepository =
       Mockito.mock(SessionActivityRepository.class);
 
   private static User getSampleUser(String id) {
@@ -128,7 +127,6 @@ public class UserSessionActivityTrackingStreamControllerTests {
 
     Serde<Event> eventSerde = StreamConfiguration.getJsonSerdeForClass(Event.class);
     Serializer<Event> eventSerializer = eventSerde.serializer();
-    Deserializer<Event> eventDeserializer = eventSerde.deserializer();
 
     authEventTestInputTopic =
         topologyTestDriver.createInputTopic(
@@ -225,12 +223,12 @@ public class UserSessionActivityTrackingStreamControllerTests {
     // when
     authEventTestInputTopic.pipeRecordList(
         List.of(
-            new TestRecord<String, Event>(sessionId_1, testAuthEvent_1),
-            new TestRecord<String, Event>(sessionId_2, testAuthEvent_2)));
+            new TestRecord<>(sessionId_1, testAuthEvent_1),
+            new TestRecord<>(sessionId_2, testAuthEvent_2)));
     navEventTestInputTopic.pipeRecordList(
         List.of(
-            new TestRecord<String, Event>(sessionId_2, testNavEvent_2),
-            new TestRecord<String, Event>(sessionId_1, testNavEvent_1)));
+            new TestRecord<>(sessionId_2, testNavEvent_2),
+            new TestRecord<>(sessionId_1, testNavEvent_1)));
 
     // then
     SessionActivity expectedSessionActivity_1 =
