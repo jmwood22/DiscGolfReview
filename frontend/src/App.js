@@ -8,12 +8,9 @@ import CourseEdit from './pages/course/CourseEdit';
 import {ProtectedRoute} from "./components/auth/ProtectedRoute";
 import Review from "./pages/course/AddReview";
 import {useNavigationTracking} from "./components/tracking/useNavigationTracking";
-import {useAuth0} from "@auth0/auth0-react";
 import {TrackLoginEvent} from "./components/tracking/TrackLoginEvent";
 
 export const App = () => {
-
-    const { user } = useAuth0();
 
     useNavigationTracking();
 
