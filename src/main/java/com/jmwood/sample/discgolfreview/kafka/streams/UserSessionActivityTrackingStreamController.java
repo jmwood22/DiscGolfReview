@@ -23,7 +23,6 @@ public class UserSessionActivityTrackingStreamController {
 
   private final KafkaStreamsConfiguration kafkaStreamsConfiguration;
 
-  private KafkaStreams streams;
 
   private final Topic<String, Event> authEventTopic;
   private final Topic<String, Event> navEventTopic;
@@ -31,8 +30,8 @@ public class UserSessionActivityTrackingStreamController {
   private final Topic<String, Event> clickEventTopic;
 
   private final Topic<String, SessionActivity> sessionActivityTopic;
-
   private final SessionActivityAggregator sessionActivityAggregator;
+  private KafkaStreams streams;
 
   public Topology buildTopology() {
     StreamsBuilder builder = new StreamsBuilder();

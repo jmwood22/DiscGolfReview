@@ -12,12 +12,11 @@ import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 import java.util.Date;
 
-// @Data
 @Getter
 @Setter
 @ToString
 @SuperBuilder
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
   @JsonSubTypes.Type(value = AuthEvent.class, name = "@class"),
   @JsonSubTypes.Type(value = NavEvent.class, name = "@class"),

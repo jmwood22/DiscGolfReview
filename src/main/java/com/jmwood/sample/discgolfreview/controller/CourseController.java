@@ -11,7 +11,6 @@ import com.jmwood.sample.discgolfreview.model.event.enums.CourseEventType;
 import com.jmwood.sample.discgolfreview.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/courses")
 public class CourseController {
+
+  private static final String SESSION_ID_HEADER = "Session-Id";
+  private static final String USER_HEADER = "User";
 
   private final CourseRepository courseRepository;
   private final EventController eventController;
@@ -46,8 +48,8 @@ public class CourseController {
   @PostMapping
   public ResponseEntity createCourse(
       @RequestBody Course course,
-      @RequestHeader("Session-Id") String sessionId,
-      @RequestHeader("User") String userJson)
+      @RequestHeader(SESSION_ID_HEADER) String sessionId,
+      @RequestHeader(USER_HEADER) String userJson)
       throws URISyntaxException {
     log.info("Received request to create Course: {}", course);
     CourseEvent event =
@@ -62,8 +64,8 @@ public class CourseController {
   public ResponseEntity updateCourse(
       @PathVariable String id,
       @RequestBody Course course,
-      @RequestHeader("Session-Id") String sessionId,
-      @RequestHeader("User") String userJson) {
+      @RequestHeader(SESSION_ID_HEADER) String sessionId,
+      @RequestHeader(USER_HEADER) String userJson) {
     log.info("Received request to update Course with id {} to Course: {}", id, course);
     Course currentCourse = courseRepository.findById(id).orElseThrow(RuntimeException::new);
     currentCourse.setName(course.getName());
@@ -87,8 +89,8 @@ public class CourseController {
   public ResponseEntity addReview(
       @PathVariable String id,
       @RequestBody Review review,
-      @RequestHeader("Session-Id") String sessionId,
-      @RequestHeader("User") String userJson) {
+      @RequestHeader(SESSION_ID_HEADER) String sessionId,
+      @RequestHeader(USER_HEADER) String userJson) {
     log.info("Received request to add the following review to Course with id {}: {}", id, review);
     Course course = courseRepository.findById(id).orElseThrow(RuntimeException::new);
     course.addReview(review);
@@ -104,8 +106,8 @@ public class CourseController {
   @DeleteMapping("/{id}")
   public ResponseEntity deleteCourse(
       @PathVariable String id,
-      @RequestHeader("Session-Id") String sessionId,
-      @RequestHeader("User") String userJson) {
+      @RequestHeader(SESSION_ID_HEADER) String sessionId,
+      @RequestHeader(USER_HEADER) String userJson) {
     log.info("Received request to delete Course with id {}", id);
     CourseEvent event =
         createEvent(
@@ -116,23 +118,6 @@ public class CourseController {
     eventController.submitCourseEvent(event);
     courseRepository.deleteById(id);
     return ResponseEntity.ok().build();
-  }
-
-  @GetMapping("saveSample")
-  public ResponseEntity<HttpStatus> saveSampleCourse() {
-    log.info("Received request to save sample Course");
-    courseRepository.save(createSampleCourse());
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  private Course createSampleCourse() {
-    return Course.builder()
-        .name("Sample Course")
-        .location("Middle of Nowhere")
-        .description("Sample description text")
-        .defaultImageUrl("https://i.imgur.com/lI9MXsk.jpeg")
-        .amenities("Sample amenities")
-        .build();
   }
 
   private User extractUserFromJson(String userJson) {

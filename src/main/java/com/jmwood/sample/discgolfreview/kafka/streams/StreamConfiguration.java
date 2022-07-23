@@ -21,7 +21,7 @@ public class StreamConfiguration {
   @Bean
   KafkaStreamsConfiguration streamsConfiguration(
       @Value("${spring.kafka.streams.application-id}") String applicationId,
-      @Value("${spring.kafka.streams.bootstrap-servers}") String bootstrapServers) {
+      @Value("${kafka.bootstrap-servers}") String bootstrapServers) {
     Map<String, Object> props = new HashMap<>();
 
     props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
