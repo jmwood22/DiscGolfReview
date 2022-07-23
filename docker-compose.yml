@@ -1,0 +1,84 @@
+version: '3.3'
+
+services:
+  backend:
+    image: disc-golf-review/backend
+    container_name: backend
+    hostname: backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=deployed
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=dgr
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    ports:
+      - "8080:8080"
+    networks:
+      - back-tier
+    depends_on:
+      - mongo_db
+      - kafka
+  frontend:
+    image: disc-golf-review/frontend
+    container_name: frontend
+    hostname: frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - front-tier
+      - back-tier
+    depends_on:
+      - backend
+  mongo_db:
+    image: mongo
+    container_name: mongo
+    hostname: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - back-tier
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - back-tier
+  kafka:
+    image: docker.io/bitnami/kafka:3.2
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+    networks:
+      - back-tier
+    depends_on:
+      - zookeeper
+networks:
+  front-tier: { }
+  back-tier: { }
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local

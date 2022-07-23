@@ -10,6 +10,7 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.state.KeyValueStore;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ import javax.annotation.PreDestroy;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Profile("deployed")
 public class UserSessionActivityTrackingStreamController {
 
   private final KafkaStreamsConfiguration kafkaStreamsConfiguration;
