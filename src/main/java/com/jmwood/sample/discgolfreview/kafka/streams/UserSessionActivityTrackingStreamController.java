@@ -4,6 +4,7 @@ import com.jmwood.sample.discgolfreview.model.SessionActivity;
 import com.jmwood.sample.discgolfreview.model.event.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -16,6 +17,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Component
@@ -24,7 +29,7 @@ import javax.annotation.PreDestroy;
 public class UserSessionActivityTrackingStreamController {
 
   private final KafkaStreamsConfiguration kafkaStreamsConfiguration;
-
+  private final AdminClient adminClient;
 
   private final Topic<String, Event> authEventTopic;
   private final Topic<String, Event> navEventTopic;
@@ -87,9 +92,61 @@ public class UserSessionActivityTrackingStreamController {
   }
 
   @PostConstruct
-  public final void start() {
-    streams = new KafkaStreams(buildTopology(), kafkaStreamsConfiguration.asProperties());
-    streams.start();
+  public final void start() throws ExecutionException, InterruptedException {
+    Executors.newSingleThreadExecutor()
+        .execute(
+            new Runnable() {
+              @Override
+              public void run() {
+                log.info("Attempting to start Kafka Stream processing...");
+                streams =
+                    new KafkaStreams(buildTopology(), kafkaStreamsConfiguration.asProperties());
+                try {
+                  waitForAllRequiredTopics();
+                } catch (ExecutionException | InterruptedException e) {
+                  throw new RuntimeException(e);
+                }
+                log.info("All required topics found. Starting Kafka Stream processing.");
+                streams.start();
+              }
+
+              public void waitForAllRequiredTopics()
+                  throws ExecutionException, InterruptedException {
+                List<String> topicList =
+                    List.of(
+                        authEventTopic.getName(),
+                        navEventTopic.getName(),
+                        courseEventTopic.getName(),
+                        clickEventTopic.getName());
+                log.info("Looking for the following topics to be available: {}", topicList);
+                Set<String> listTopicsResult = adminClient.listTopics().names().get();
+                log.info("Found the following topics: {}", listTopicsResult);
+
+                boolean inputTopicsCreated = false;
+                int sleepTimeMs = 60000;
+                while (!inputTopicsCreated) {
+                  int foundCount = 0;
+                  for (String topic : topicList) {
+                    if (!listTopicsResult.contains(topic)) {
+                      log.info("Topic {} was not found in set of available topics.", topic);
+                    } else {
+                      foundCount++;
+                    }
+                  }
+                  if (foundCount == topicList.size()) {
+                    inputTopicsCreated = true;
+                  } else {
+                    log.info(
+                        "Found {} of {} required topics. Sleeping for {} seconds before trying again.",
+                        foundCount,
+                        topicList.size(),
+                        sleepTimeMs / 1000);
+                    Thread.sleep(sleepTimeMs);
+                    listTopicsResult = adminClient.listTopics().names().get();
+                  }
+                }
+              }
+            });
   }
 
   @PreDestroy

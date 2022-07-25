@@ -7,6 +7,7 @@ import com.jmwood.sample.discgolfreview.model.event.*;
 import com.jmwood.sample.discgolfreview.model.event.enums.AuthEventType;
 import com.jmwood.sample.discgolfreview.model.event.enums.CourseEventType;
 import com.jmwood.sample.discgolfreview.repository.SessionActivityRepository;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
@@ -43,6 +44,7 @@ public class UserSessionActivityTrackingStreamControllerTests {
   private TestOutputTopic<String, SessionActivity> sessionActivityTestOutputTopic;
   private final SessionActivityRepository mockSessionActivityRepository =
       Mockito.mock(SessionActivityRepository.class);
+  private final AdminClient mockAdminClient = Mockito.mock(AdminClient.class);
 
   private static User getSampleUser(String id) {
     return User.builder()
@@ -114,6 +116,7 @@ public class UserSessionActivityTrackingStreamControllerTests {
     UserSessionActivityTrackingStreamController streamController =
         new UserSessionActivityTrackingStreamController(
             kafkaStreamsConfiguration,
+            mockAdminClient,
             streamConfiguration.authEventTopic(TEST_AUTH_EVENT_TOPIC),
             streamConfiguration.navEventTopic(TEST_NAV_EVENT_TOPIC),
             streamConfiguration.courseEventTopic(TEST_COURSE_EVENT_TOPIC),

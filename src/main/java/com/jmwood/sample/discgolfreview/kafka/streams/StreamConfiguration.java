@@ -2,6 +2,8 @@ package com.jmwood.sample.discgolfreview.kafka.streams;
 
 import com.jmwood.sample.discgolfreview.model.SessionActivity;
 import com.jmwood.sample.discgolfreview.model.event.Event;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
@@ -30,6 +32,13 @@ public class StreamConfiguration {
     props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
     return new KafkaStreamsConfiguration(props);
+  }
+
+  @Bean
+  AdminClient adminClient(@Value("${kafka.bootstrap-servers}") String bootstrapServers) {
+    Map<String, Object> props = new HashMap<>();
+    props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    return AdminClient.create(props);
   }
 
   @Bean
