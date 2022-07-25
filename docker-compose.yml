@@ -2,12 +2,12 @@ version: '3.3'
 
 services:
   backend:
-    image: disc-golf-review/backend
+    image: jmwood22/dgr-backend
     container_name: backend
-    hostname: backend
-    build:
-      context: .
-      dockerfile: Dockerfile
+    #    uncomment if images need to be rebuilt
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=deployed
       - SPRING_DATA_MONGODB_HOST=mongo
@@ -19,15 +19,15 @@ services:
     networks:
       - back-tier
     depends_on:
-      - mongo_db
+      - mongodb
       - kafka
   frontend:
-    image: disc-golf-review/frontend
+    image: jmwood22/dgr-frontend
     container_name: frontend
-    hostname: frontend
-    build:
-      context: frontend
-      dockerfile: Dockerfile
+    #    uncomment if images need to be rebuilt
+    #    build:
+    #      context: frontend
+    #      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     networks:
@@ -35,10 +35,9 @@ services:
       - back-tier
     depends_on:
       - backend
-  mongo_db:
+  mongodb:
     image: mongo
     container_name: mongo
-    hostname: mongo
     ports:
       - "27017:27017"
     volumes:
@@ -48,7 +47,6 @@ services:
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
     container_name: zookeeper
-    hostname: zookeeper
     ports:
       - "2181:2181"
     volumes:
@@ -60,7 +58,6 @@ services:
   kafka:
     image: docker.io/bitnami/kafka:3.2
     container_name: kafka
-    hostname: kafka
     ports:
       - "9092:9092"
     volumes:
@@ -72,6 +69,7 @@ services:
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     networks:
       - back-tier
     depends_on:
@@ -81,8 +79,5 @@ networks:
   back-tier: { }
 volumes:
   zookeeper_data:
-    driver: local
   kafka_data:
-    driver: local
   mongodb_data_container:
-    driver: local
