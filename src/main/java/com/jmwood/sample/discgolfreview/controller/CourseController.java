@@ -120,6 +120,44 @@ public class CourseController {
     return ResponseEntity.ok().build();
   }
 
+  @GetMapping("/addSampleCourses")
+  public ResponseEntity addSampleCourses() {
+    log.info("Received request to add sample Courses.");
+    Course course1 =
+        Course.builder()
+            .name("Sample Course 1")
+            .location("Nowheresville")
+            .description("Just grass and baskets.")
+            .defaultImageUrl("https://i.imgur.com/lI9MXsk.jpeg")
+            .amenities("Clean bathrooms.")
+            .author(getSampleUserByIndex(0))
+            .reviews(getSampleReviews())
+            .build();
+    Course course2 =
+        Course.builder()
+            .name("Sample Course 2")
+            .location("Middle of Nowhere")
+            .description("Tight, wooded course.")
+            .defaultImageUrl("https://i.imgur.com/cvBuouY.jpeg")
+            .amenities("Hiking trails.")
+            .author(getSampleUserByIndex(1))
+            .reviews(getSampleReviews())
+            .build();
+    Course course3 =
+        Course.builder()
+            .name("Maple Hill")
+            .location("Leicester, MA")
+            .description("Great views, great disc golf.")
+            .defaultImageUrl("https://i.imgur.com/WgbzT3Z.jpeg")
+            .amenities("Pro shop nearby.")
+            .author(getSampleUserByIndex(2))
+            .reviews(getSampleReviews())
+            .build();
+
+    courseRepository.saveAll(List.of(course1, course2, course3));
+    return ResponseEntity.ok().build();
+  }
+
   private User extractUserFromJson(String userJson) {
     ObjectMapper mapper =
         new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -139,5 +177,53 @@ public class CourseController {
         .course(course)
         .type(type)
         .build();
+  }
+
+  private List<Review> getSampleReviews() {
+
+    Review review1 = new Review();
+    review1.setAuthor(getSampleUserByIndex(0));
+    review1.setRating(4);
+    review1.setText("Great course, very beginner friendly.");
+
+    Review review2 = new Review();
+    review2.setAuthor(getSampleUserByIndex(1));
+    review2.setRating(2);
+    review2.setText("One of the worst courses I've ever played.");
+
+    Review review3 = new Review();
+    review3.setAuthor(getSampleUserByIndex(2));
+    review3.setRating(3);
+    review3.setText("Bring some bug spray!");
+
+    return List.of(review1, review2, review3);
+  }
+
+  private User getSampleUserByIndex(int index) {
+    User user1 =
+        User.builder()
+            .id("sample-user-1")
+            .name("John Doe")
+            .nickname("John")
+            .email("john.doe@fake.com")
+            .build();
+    User user2 =
+        User.builder()
+            .id("sample-user-2")
+            .name("Jane Doe")
+            .nickname("Jane")
+            .email("jane.doe@fake.com")
+            .build();
+    User user3 =
+        User.builder()
+            .id("sample-user-3")
+            .name("Elvis Presley")
+            .nickname("Elvis")
+            .email("the.king@fake.com")
+            .build();
+
+    User[] users = new User[] {user1, user2, user3};
+
+    return users[index % users.length];
   }
 }
