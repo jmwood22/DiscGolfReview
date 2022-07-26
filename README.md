@@ -74,11 +74,14 @@ $ docker compose up -d
 ### Interaction
 
 * You should now be able to access the application via [`localhost:3000`](http://localhost:3000).
+* You can populate the application with some sample course data
+  via [`localhost:8080/courses/addSampleCourses`](http://localhost:8080/courses/addSampleCourses)
 * If you have something like [`MongoDB Compass`](https://www.mongodb.com/products/compass) installed you can view the
   database at `localhost:4000`.
 * Sign Up for an account via the Login button at the top which will redirect to an Auth0 login/signup page.
-    * The email doesn't need to be verified so fake@email.com will work.
-    * Auth0 will ask for your permission to allow DiscGolfReview to access your account when signing up.
+  * The email doesn't need to be verified, but it does have to be unique. Something like fake@email.com will work as
+    long as you use it first!
+  * Auth0 will ask for your permission to allow DiscGolfReview to access your account when signing up.
 * Click around and add/alter some Course data.
 * View the `SessionActivity` records being updated in its collection in the database or view the logs in real-time with:
 
